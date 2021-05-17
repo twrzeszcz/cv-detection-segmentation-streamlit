@@ -316,7 +316,7 @@ def body_language_decoder():
 def body_segmentation():
     img = st.file_uploader('Choose a image file', type=['jpg', 'png'])
     if img is not None:
-        img = cv2.resize(np.array(Image.open(img)), (1920, 1080))
+        img = np.array(Image.open(img))
         st.image(img)
         st.success('Successfully uploaded')
 
@@ -325,6 +325,7 @@ def body_segmentation():
     class BodySegmentation(VideoProcessorBase):
         def __init__(self) -> None:
             self.confidence_threshold = 0.5
+            # self.img = img
 
         @st.cache(allow_output_mutation=True)
         def load_bodypix_model(self):
@@ -338,8 +339,12 @@ def body_segmentation():
             mask = result.get_mask(threshold=self.confidence_threshold).numpy().astype(np.uint8)
             masked_image = cv2.bitwise_and(image, image, mask=mask)
 
+            img_shape = list(image.shape[:-1])
+            img_shape.reverse()
+            image_shape = tuple(img_shape)
+
             inverse_mask = np.abs(result.get_mask(threshold=self.confidence_threshold).numpy() - 1).astype(np.uint8)
-            masked_background = cv2.bitwise_and(img, img, mask=inverse_mask)
+            masked_background = cv2.bitwise_and(cv2.resize(img, image_shape), cv2.resize(img, image_shape), mask=inverse_mask)
             final = cv2.add(masked_image, cv2.cvtColor(masked_background, cv2.COLOR_BGR2RGB))
 
             return final
@@ -348,6 +353,7 @@ def body_segmentation():
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             image = frame.to_ndarray(format="bgr24")
 
+            # self.resize_img(image)
             image = self.live_stream(image)
 
             return av.VideoFrame.from_ndarray(image, format="bgr24")
@@ -360,8 +366,10 @@ def body_segmentation():
         async_processing=True
     )
 
+
     if webrtc_ctx.video_processor:
         webrtc_ctx.video_processor.confidence_threshold = confidence_threshold
+        # webrtc_ctx.video_processor.img = img
 
 
 
