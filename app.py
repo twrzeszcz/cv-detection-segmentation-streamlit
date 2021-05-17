@@ -316,7 +316,7 @@ def body_language_decoder():
 def body_segmentation():
     img = st.file_uploader('Choose a image file', type=['jpg', 'png'])
     if img is not None:
-        img = cv2.resize(np.array(Image.open(img)), (640, 480))
+        img = cv2.resize(np.array(Image.open(img)), (1920, 1080))
         st.image(img)
         st.success('Successfully uploaded')
 
