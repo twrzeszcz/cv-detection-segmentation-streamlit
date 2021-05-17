@@ -1,1 +1,2 @@
-# cv-detection-segmentation-streamlit
+# General info
+This is a simple computer vision project with 3 features from which a Streamlit app is build. There is a *Body Language Detector*, *Body Segmentation* feature and a *Face Mask Detector*. The implementation of the first two is shown in the **body_language_decoder** and **body_segmentation** notebooks and was done according to these tutorials [YouTube1](https://www.youtube.com/watch?v=We1uB79Ci-w&t=2690s), [YouTube2](https://www.youtube.com/watch?v=0tB6jG55mig&t=317s). Face mask detector is described in details here [Github](https://github.com/twrzeszcz/face-mask-detection-streamlit). The app is deployed here [Streamlit](https://share.streamlit.io/twrzeszcz/cv-detection-segmentation-streamlit/main/app.py).
