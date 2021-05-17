@@ -73,11 +73,11 @@ def body_language_decoder():
             def live_stream(self, image):
                 mp_drawing, mp_holistic, holistic = self.load_model_utils()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-                image.flags.writeable = False
+                # image.flags.writeable = False
 
                 results = holistic.process(image)
 
-                image.flags.writeable = True
+                # image.flags.writeable = True
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
                 mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACE_CONNECTIONS,
