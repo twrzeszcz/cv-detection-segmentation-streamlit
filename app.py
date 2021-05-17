@@ -70,8 +70,8 @@ def body_language_decoder():
 
                 return mp_drawing, mp_holistic, holistic
 
-            def live_stream(self, image):
-                mp_drawing, mp_holistic, holistic = self.load_model_utils()
+            def live_stream(self, image, mp_drawing, mp_holistic, holistic):
+                # mp_drawing, mp_holistic, holistic = self.load_model_utils()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 image.flags.writeable = False
 
@@ -102,8 +102,8 @@ def body_language_decoder():
 
                 return image
 
-            def live_stream_save(self, image):
-                mp_drawing, mp_holistic, holistic = self.load_model_utils()
+            def live_stream_save(self, image, mp_drawing, mp_holistic, holistic):
+                # mp_drawing, mp_holistic, holistic = self.load_model_utils()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 image.flags.writeable = False
 
@@ -162,11 +162,11 @@ def body_language_decoder():
 
             def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
                 image = frame.to_ndarray(format="bgr24")
-
+                mp_drawing, mp_holistic, holistic = self.load_model_utils()
                 if self.save == 'Stream only':
-                    image = self.live_stream(image)
+                    image = self.live_stream(image, mp_drawing, mp_holistic, holistic)
                 else:
-                    image = self.live_stream_save(image)
+                    image = self.live_stream_save(image, mp_drawing, mp_holistic, holistic)
 
                 return av.VideoFrame.from_ndarray(image, format="bgr24")
 
