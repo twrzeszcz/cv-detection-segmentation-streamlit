@@ -344,6 +344,8 @@ def body_language_decoder():
     if st.button('Clear saved landmarks'):
         saved_landmarks.clear()
 
+    st.write(saved_landmarks[0][:3])
+
 def body_segmentation():
     img = st.file_uploader('Choose a image file', type=['jpg', 'png'])
     if img is not None:
