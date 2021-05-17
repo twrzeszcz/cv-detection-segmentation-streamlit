@@ -70,8 +70,8 @@ def body_language_decoder():
 
                 return mp_drawing, mp_holistic, holistic
 
-            def live_stream(self, image, mp_drawing, mp_holistic, holistic):
-                # mp_drawing, mp_holistic, holistic = self.load_model_utils()
+            def live_stream(self, image):
+                mp_drawing, mp_holistic, holistic = self.load_model_utils()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 image.flags.writeable = False
 
@@ -102,8 +102,8 @@ def body_language_decoder():
 
                 return image
 
-            def live_stream_save(self, image, mp_drawing, mp_holistic, holistic):
-                # mp_drawing, mp_holistic, holistic = self.load_model_utils()
+            def live_stream_save(self, image):
+                mp_drawing, mp_holistic, holistic = self.load_model_utils()
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 image.flags.writeable = False
 
@@ -162,11 +162,11 @@ def body_language_decoder():
 
             def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
                 image = frame.to_ndarray(format="bgr24")
-                mp_drawing, mp_holistic, holistic = self.load_model_utils()
+
                 if self.save == 'Stream only':
-                    image = self.live_stream(image, mp_drawing, mp_holistic, holistic)
+                    image = self.live_stream(image)
                 else:
-                    image = self.live_stream_save(image, mp_drawing, mp_holistic, holistic)
+                    image = self.live_stream_save(image)
 
                 return av.VideoFrame.from_ndarray(image, format="bgr24")
 
@@ -268,9 +268,12 @@ def body_language_decoder():
                         body_language_prob = model.predict_proba(X)[0]
                         del X, left_hand_row, right_hand_row
 
+                    img_shape = list(image.shape[:-1])
+                    img_shape.reverse()
+
                     coords = tuple(np.multiply(np.array((
                         results.pose_landmarks.landmark[mp_holistic.PoseLandmark.LEFT_EAR].x,
-                        results.pose_landmarks.landmark[mp_holistic.PoseLandmark.LEFT_EAR].y)), [640, 480]).astype(int))
+                        results.pose_landmarks.landmark[mp_holistic.PoseLandmark.LEFT_EAR].y)), img_shape).astype(int))
 
                     cv2.rectangle(image, (coords[0], coords[1] + 5),
                                   (coords[0] + len(body_language_class) * 20, coords[1] - 30),
@@ -325,7 +328,6 @@ def body_segmentation():
     class BodySegmentation(VideoProcessorBase):
         def __init__(self) -> None:
             self.confidence_threshold = 0.5
-            # self.img = img
 
         @st.cache(allow_output_mutation=True)
         def load_bodypix_model(self):
@@ -353,7 +355,6 @@ def body_segmentation():
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             image = frame.to_ndarray(format="bgr24")
 
-            # self.resize_img(image)
             image = self.live_stream(image)
 
             return av.VideoFrame.from_ndarray(image, format="bgr24")
@@ -369,7 +370,6 @@ def body_segmentation():
 
     if webrtc_ctx.video_processor:
         webrtc_ctx.video_processor.confidence_threshold = confidence_threshold
-        # webrtc_ctx.video_processor.img = img
 
 
 
